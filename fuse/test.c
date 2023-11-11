@@ -127,7 +127,7 @@ test_bytecode_executor (void)
 
   FBytecodeChunkMany (chunk, 
   
-  INITSEC, 16, NNULL,
+  ECHO, 0x47, NNULL,
   
   __END__);
 

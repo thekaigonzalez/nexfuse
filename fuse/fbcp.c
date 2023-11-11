@@ -8,7 +8,7 @@ int __ECHO(F_Cpu *cpu, FCtx *ctx) {
 int __INITSEC(F_Cpu *cpu, FCtx *ctx) {
   printf("nd: %s\n", (char *) FCtxGet(ctx, 1));
 
-  CPInitializeSection(cpu, (byte) FCtxGet(ctx, 2));
+  CPInitializeSection(cpu, (byte) FCtxGet(ctx, 1));
   return (0);
 }
 byte
@@ -16,6 +16,8 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 {
   int err = 0;
   int i = 0;
+
+  int pc = 0; // keep count of current place
 
   FFnMap *fns = FFnMapInit();
 
@@ -39,7 +41,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
       break; // END signals end of bytecode
     }
 
-    else if (op == NNULL) {
+    else if (op == NNULL && pc > 0) { /* if the pc is greater than 0 meaning that we've advanced*/
       FFnEntry *f = FFnMapGet(fns, FCtxGet(_ctx, 0));
 
       if (f == NULL) {
@@ -57,31 +59,11 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
       FBytecodeChunkReset(tmp);
       FListClear(_ctx->__ptr);
 
-      free(f);
-    }
-    
-    else if (op == SUB && state == START) {
-      state = SUBN;
-
-      FBytecodeChunkReset(tmp);
-      FListClear(_ctx->__ptr);
-    }
-
-    else if (op == ENDSUB && state == SUBN) {
-      state = START;
-
-      byte ptr = FCtxGet(_ctx, 1);
-
-      if (!CPIsSectionInitialized(cpu, ptr)) {
-        
-        break;
-      }
-
-      FBytecodeChunkReset(tmp);
-      FListClear(_ctx->__ptr);
+      pc = 0;
     } else {
       FBytecodeChunkAppend(tmp, op);
-    FListPush(_ctx->__ptr, op);
+      FListPush(_ctx->__ptr, op);
+      pc++;
     }
 
     i++;

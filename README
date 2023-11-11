@@ -1,0 +1,36 @@
+NexFUSE
+
+    the alternative to OpenLUD OBI(OpenLUD ByteCode Intermediate) written
+    entirely in ANSI C
+
+    FUSE supports the concept of incremental memory allocation, meaning that
+    instead of every byte being allocated on the heap, only a few of them are
+    allocated at a time. for example: if you have a list of 10 bytes, and the
+    incremental pointer is 10, then there will only be 1 malloc call, instead of
+    calling it 10 times.
+
+    nexfuse supports all of the OpenLUD standard features as well as contains
+    new features that are not supported by OpenLUD.
+
+    nexfuse features include:
+
+    OpenLUD OBI:
+        * NNULL as statement terminators
+        * ECHO
+        * MOVE
+        * EACH
+        * RESET
+        * CLEAR
+        * PUT
+        * GET
+        * INIT
+        * END
+    
+    FUSE features:
+        * SUB - starts a subroutine
+        * ENDSUB - ends a subroutine
+        * GOSUB - jumps to a subroutine
+        * IF - IF condition is 1 jump to subroutine
+        * ALIAS - ALIAS a byte to another (note: ALIAS will replace the original
+        byte)
+        

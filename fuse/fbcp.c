@@ -86,6 +86,13 @@ __GOSUB (F_Cpu *cpu, FCtx *ctx)
   return 0;
 }
 
+int __CLEAR (F_Cpu *cpu, FCtx *ctx) {
+  // clear all registers
+  for (int i = 0; i < FUSE_OPENLUD_REGISTER_LIMIT; i++) {
+    memset (&cpu->reg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
+  }
+}
+
 byte
 CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 {
@@ -102,6 +109,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, PUT, __PUT);
   FFnMapDefine (fns, INIT, __INIT);
   FFnMapDefine (fns, RESET, __RESET);
+  FFnMapDefine (fns, CLEAR, __CLEAR);
   FFnMapDefine (fns, GOSUB, __GOSUB);
 
   _FBytecodeState state = START;
@@ -146,6 +154,8 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
             {
               CPAppendByteSection (cpu, reg_addr, _ctx->__ptr->ptr[j]);
             }
+
+            pc = 0;
 
           FBytecodeChunkReset (tmp);
           FListClear (_ctx->__ptr);

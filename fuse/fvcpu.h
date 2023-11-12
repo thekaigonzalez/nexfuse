@@ -22,6 +22,7 @@ typedef struct FSection
 {
   byte data[FUSE_OPENLUD_BYTE_TOP]; // 256 bytes of data (assuming nothing has
                                     // been overwritten)
+
   int ptr;
   int initialized; // is this section initialized
 } FSection;
@@ -43,6 +44,9 @@ void CPPutByteRegister (F_Cpu *cpu, int reg, int index, byte value);
 void CPPutByteSection (F_Cpu *cpu, int section, int index, byte value);
 
 void CPAppendByteSection (F_Cpu *cpu, int section, byte value);
+
+int CPVerifyRegister (F_Cpu *cpu, int index);
+int CPVerifySection (F_Cpu *cpu, int index);
 
 FBool CPIsRegisterInitialized (F_Cpu *cpu, int index);
 FBool CPIsSectionInitialized (F_Cpu *cpu, int index);

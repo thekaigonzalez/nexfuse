@@ -13,6 +13,9 @@ FCtxInit ()
 void *
 FCtxGet (FCtx *ctx, int index)
 {
+  if (index < 0 || index >= ctx->__ptr->size) {
+    return NULL;
+  }
   return FListGet (ctx->__ptr, index);
 }
 

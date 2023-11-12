@@ -37,9 +37,9 @@ typedef int FBool;
 // FUSE expansions
 #define SUB (byte) 10
 #define ENDSUB (byte) 11
-#define IF (byte) 12
-#define ENDIF (byte) 13
-#define ALIAS (byte) 14
+// #define IF (byte) 12
+// #define ENDIF (byte) 13
+// #define ALIAS (byte) 14
 #define GOSUB (byte) 15
 
 // initialize and end

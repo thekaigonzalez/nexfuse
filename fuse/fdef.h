@@ -48,6 +48,6 @@ typedef int FBool;
 #define END (byte) 22
 
 // FUSE vararg ender
-#define __END__ (byte) 1
+#define __END__ (byte) 255
 
 #endif

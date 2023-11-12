@@ -246,7 +246,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 
       else if (op == NNULL && pc > 0 && state == START)
         { /* if the pc is greater than 0 meaning that we've advanced*/
-          FFnEntry *f = FFnMapGet (fns, FCtxGet (_ctx, 0));
+          FFnEntry *f = FFnMapGet (fns, (byte) FCtxGet (_ctx, 0));
 
           if (f == NULL)
             {

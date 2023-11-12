@@ -215,7 +215,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 
       byte op = chunk->ptr[i];
 
-      if (op == END && state == START)
+      if (op == END && state == START && pc == 0)
         {
           end = 1;
           break; // END signals end of bytecode

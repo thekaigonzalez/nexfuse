@@ -23,9 +23,14 @@ main (void)
   END,
   ENDSUB,
 
+  SUB, 9,
+  ECHO, 0x0a, NNULL,
+  END,
+  ENDSUB,
+
   GOSUB, 8, NNULL,
-  GOSUB, 8, NNULL,
-  
+  GOSUB, 9, NNULL,
+
   END,
   __END__);
 

@@ -50,4 +50,7 @@ typedef int FBool;
 // FUSE vararg ender
 #define __END__ (byte) 255
 
+// FUSE Error
+int FError(const char* fmt);
+
 #endif

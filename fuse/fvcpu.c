@@ -55,6 +55,13 @@ CPPutByteSection (F_Cpu *cpu, int section, int index, byte value)
   cpu->section[section].data[index] = value;
 }
 
+void
+CPAppendByteSection (F_Cpu *cpu, int section, byte value)
+{
+  cpu->section[section].data[cpu->section[section].ptr] = value;
+  cpu->section[section].ptr++;
+}
+
 FBool
 CPIsRegisterInitialized (F_Cpu *cpu, int index)
 {

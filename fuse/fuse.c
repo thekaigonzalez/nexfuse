@@ -21,6 +21,7 @@ FMain (int argc, char *argv[])
   char* file = argv[1];
 
   FILE *f = fopen(file, "rb");
+  
   if (f == NULL) {
     printf("fuse: error: failed to open file `%s'\n", file);
     FBytecodeChunkFree(chunk);

@@ -3,6 +3,9 @@
 int
 __ECHO (F_Cpu *cpu, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 1) {
+    return -1;
+  }
   printf ("%c", (byte)FCtxGet (ctx, 1));
   return (0);
 }
@@ -17,6 +20,10 @@ __INITSEC (F_Cpu *cpu, FCtx *ctx)
 int
 __INIT (F_Cpu *c, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 2) {
+    return -1;
+  }
+
   CPInitializeRegister (c, (byte)FCtxGet (ctx, 1));
   return (0);
 }
@@ -25,6 +32,9 @@ __INIT (F_Cpu *c, FCtx *ctx)
 int
 __PUT (F_Cpu *cpu, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 4) {
+    return -1;
+  }
   byte reg_num = (byte)FCtxGet (ctx, 1);
   byte reg_byte = (byte)FCtxGet (ctx, 2);
   byte reg_pos = (byte)FCtxGet (ctx, 3);
@@ -43,7 +53,11 @@ __PUT (F_Cpu *cpu, FCtx *ctx)
 int
 __EACH (F_Cpu *cpu, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 2) {
+    return -1;
+  }
   byte reg_num = (byte)FCtxGet (ctx, 1);
+
   FReg reg = cpu->reg[reg_num];
 
   for (int i = 0; i < FUSE_OPENLUD_REGISTER_BYTES; ++i)
@@ -69,11 +83,20 @@ __RESET (F_Cpu *cpu, FCtx *ctx)
 int
 __GOSUB (F_Cpu *cpu, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 2) {
+    return -1;
+  }
+
   byte reg_num = (byte)FCtxGet (ctx, 1);
 
   FSection *reg = &cpu->section[reg_num];
 
   FBytecodeChunk *tmp = FBytecodeChunkInit ();
+
+  if (reg == NULL)
+    {
+      return -1;
+    }
 
   for (int i = 0; i < reg->ptr; ++i)
     {
@@ -91,6 +114,65 @@ int __CLEAR (F_Cpu *cpu, FCtx *ctx) {
   for (int i = 0; i < FUSE_OPENLUD_REGISTER_LIMIT; i++) {
     memset (&cpu->reg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
   }
+}
+
+// __GET
+// get byte in reg at pos and put in reg OUTREG
+int
+__GET (F_Cpu *cpu, FCtx *ctx)
+{
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+  byte reg_pos = (byte)FCtxGet (ctx, 2);
+  byte reg_out = (byte)FCtxGet (ctx, 3);
+
+  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT || reg_num == NULL)
+    {
+      return -1;
+    }
+
+  if (reg_pos >= FUSE_OPENLUD_REGISTER_BYTES || reg_pos == NULL)
+    {
+      return -1;
+    }
+
+  if (reg_out >= FUSE_OPENLUD_REGISTER_LIMIT || reg_out == NULL)
+    {
+      return -1;
+    }
+
+  FReg *r = &cpu->reg[reg_num];
+
+  FReg* n = &cpu->reg[reg_out];
+  n->data[n->ptr] = r->data[reg_pos];
+  n->ptr++;
+
+  return (0);
+}
+
+// __MOVE
+// moves a byte into a register
+int
+__MOVE (F_Cpu *cpu, FCtx *ctx)
+{
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+  byte reg_byte = (byte)FCtxGet (ctx, 2);
+
+  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT || reg_num == NULL)
+    {
+      return -1;
+    }
+
+  if (reg_byte >= FUSE_OPENLUD_REGISTER_BYTES || reg_byte == NULL)
+    {
+      return -1;
+    }
+
+  FReg *r = &cpu->reg[reg_num];
+
+  r->data[r->ptr] = reg_byte;
+  r->ptr++;
+
+  return (0);
 }
 
 byte
@@ -111,6 +193,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, RESET, __RESET);
   FFnMapDefine (fns, CLEAR, __CLEAR);
   FFnMapDefine (fns, GOSUB, __GOSUB);
+  FFnMapDefine (fns, GET, __GET);
 
   _FBytecodeState state = START;
 

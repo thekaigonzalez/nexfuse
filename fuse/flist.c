@@ -1,9 +1,18 @@
 #include "flist.h"
+#include "fdef.h"
 /*Copyright 2019-2023 Kai D. Gonzalez*/
 FList *
 FListInit ()
 {
   FList *list = (FList *)malloc (sizeof (FList));
+
+  if (list == NULL)
+    {
+      FError ("fuse: out of memory\n");
+      FFree (list);
+      return NULL;
+    }
+  
 
   list->size = 0;
   list->cap = FUSE_LIST_INCREMENT;
@@ -15,6 +24,12 @@ FListInit ()
 void
 FListPush (FList *list, void *ptr)
 {
+  if (list == NULL)
+    {
+      FError ("fuse: invalid list\n");
+      FListFree (list);
+      return;
+    }
   if (list->size == list->cap)
     {
       list->cap += FUSE_LIST_INCREMENT;
@@ -29,6 +44,11 @@ FListPush (FList *list, void *ptr)
 void
 FLRealloc (FList *list, size_t size)
 {
+  if (list == NULL) {
+    FError ("fuse: invalid list\n");
+    FListFree (list);
+    return;
+  }
   list->ptr = FRealloc (list->ptr, size * sizeof (void *));
 }
 
@@ -86,7 +106,7 @@ FListPop (FList *list)
 byte
 FLAsByte (FList *list, size_t index)
 {
-  return (byte) FListGet (list, index);
+  return (byte)FListGet (list, index);
 }
 
 size_t

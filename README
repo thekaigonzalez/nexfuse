@@ -30,7 +30,4 @@ NexFUSE
         * SUB - starts a subroutine
         * ENDSUB - ends a subroutine
         * GOSUB - jumps to a subroutine
-        * IF - IF condition is 1 jump to subroutine
-        * ALIAS - ALIAS a byte to another (note: ALIAS will replace the original
-        byte)
         

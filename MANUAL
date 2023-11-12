@@ -5,7 +5,3 @@ note: this does not go over openLUD OBI, the manual is in the openLUD repository
 * SUB - starts a subroutine (SUB ... ENDSUB)
 * ENDSUB - ends a subroutine (SUB ... ENDSUB)
 * GOSUB - jumps to a subroutine (GOSUB [address])
-* LIT - loads a list of bytes (e.g. LIT 0x45 0x67 0x89)
-* IF - IF condition is 1 jump to subroutine (IF [ALIAS?BYTE (1|0)] ... ENDIF)
-* ENDIF - ends an IF condition (IF [ALIAS?BYTE (1|0)] ... ENDIF)
-* ALIAS - ALIAS a byte to another (note: ALIAS will replace the original byte)

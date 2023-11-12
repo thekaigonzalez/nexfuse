@@ -9,6 +9,15 @@ NexFUSE
     incremental pointer is 10, then there will only be 1 malloc call, instead of
     calling it 10 times.
 
+    FUSE is written entirely in ANSI C, with memory-first programming principles
+    leading to a consistent allocation order within the entire program, but
+    ensuring that the memory is not getting in the way of the bytecode
+    interpreter itself.
+
+    this software was written in a day and a half. I had to rush due to going to
+    an all-day event so i couldn't put as much time as i wanted to into this
+    project.
+
     nexfuse supports all of the OpenLUD standard features as well as contains
     new features that are not supported by OpenLUD.
 

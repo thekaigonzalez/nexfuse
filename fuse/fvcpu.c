@@ -62,6 +62,42 @@ CPAppendByteSection (F_Cpu *cpu, int section, byte value)
   cpu->section[section].ptr++;
 }
 
+int
+CPVerifySection (F_Cpu *cpu, int index)
+{
+  if (index < 0 || index >= FUSE_OPENLUD_REGISTER_LIMIT) {
+    return -1;
+  }
+
+  if (!cpu->section[index].initialized) {
+    return -1;
+  }
+
+  if (cpu->section[index].ptr > FUSE_OPENLUD_BYTE_TOP) {
+    return -1;
+  }
+
+  return 0;
+}
+
+int
+CPVerifyRegister (F_Cpu *cpu, int index)
+{
+  if (index < 0 || index >= FUSE_OPENLUD_REGISTER_LIMIT) {
+    return -1;
+  }
+
+  if (!cpu->reg[index].initialized) {
+    return -1;
+  }
+
+  if (cpu->reg[index].ptr > FUSE_OPENLUD_REGISTER_BYTES) {
+    return -1;
+  }
+
+  return 0;
+}
+
 FBool
 CPIsRegisterInitialized (F_Cpu *cpu, int index)
 {

@@ -5,6 +5,7 @@
 #include "fvcpu.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 #define PASSED printf ("test %s passed\n", __func__)
 
@@ -127,9 +128,17 @@ test_bytecode_executor (void)
 
   FBytecodeChunkMany (chunk, 
   
-  ECHO, 0x47, NNULL,
-  
+  INITSEC, 1, NNULL,
+  INIT, 1, NNULL,
+
+  PUT, 1, 0x47, 7, NNULL,
+  EACH, 1, NNULL,
+
   __END__);
+
+  // printf("RR %d\n", c.reg[1].data[7]);
+
+  CPShowRegister(&c, 1);
 
   byte result = CPRunBytecode (&c, chunk);
 

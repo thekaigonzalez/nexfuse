@@ -6,11 +6,43 @@ int __ECHO(F_Cpu *cpu, FCtx *ctx) {
 }
 
 int __INITSEC(F_Cpu *cpu, FCtx *ctx) {
-  printf("nd: %s\n", (char *) FCtxGet(ctx, 1));
-
-  CPInitializeSection(cpu, (byte) FCtxGet(ctx, 1));
+  CPInitializeSection(cpu, (byte) FCtxGet(ctx, 1)); // initialize the section
   return (0);
 }
+
+int __INIT(F_Cpu * c, FCtx *ctx) {
+  CPInitializeRegister(c, (byte) FCtxGet(ctx, 1));
+  return (0);
+}
+
+// PUT [reg] [byte] [pos]
+int __PUT(F_Cpu * cpu, FCtx *ctx) {
+  byte reg_num = (byte) FCtxGet(ctx, 1);
+  byte reg_byte = (byte) FCtxGet(ctx, 2);
+  byte reg_pos = (byte) FCtxGet(ctx, 3);
+
+  printf("put byte %d in register %d at position %d\n", reg_byte, reg_num, reg_pos);
+
+  FReg *r = &cpu->reg[reg_num];
+
+  r->data[reg_pos] = reg_byte;
+
+  return (0);
+}
+
+// EACH [reg]
+int __EACH(F_Cpu *cpu, FCtx *ctx) {
+  byte reg_num = (byte) FCtxGet(ctx, 1);
+  FReg reg = cpu->reg[reg_num];
+
+  for (int i = 0 ; i < FUSE_OPENLUD_REGISTER_BYTES; ++i) {
+    if (reg.data[i] != 0) {
+      printf("%c", reg.data[i]);
+    }
+  }
+  return 0;
+}
+
 byte
 CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 {
@@ -23,6 +55,9 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 
   FFnMapDefine(fns, ECHO, __ECHO);
   FFnMapDefine(fns, INITSEC, __INITSEC);
+  FFnMapDefine(fns, EACH, __EACH);
+  FFnMapDefine(fns, PUT, __PUT);
+  FFnMapDefine(fns, INIT, __INIT);
 
   _FBytecodeState state = START;
 

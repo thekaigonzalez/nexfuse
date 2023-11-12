@@ -8,6 +8,7 @@
 #include "fdef.h"
 #include "ffnmap.h"
 #include "fbcp.h"
+#include "fou.h"
 
 main (void)
 {
@@ -33,6 +34,14 @@ main (void)
 
   END,
   __END__);
+
+  FPrintBytecodeChunk (chunk);
+
+  FILE * p = fopen ("test.n", "wb");
+
+  fwrite (chunk->ptr, 1, chunk->size, p);
+
+  fclose (p);
 
   // printf("RR %d\n", c.reg[1].data[7]);
 

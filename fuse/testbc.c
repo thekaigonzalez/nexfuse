@@ -15,27 +15,40 @@ main (void)
   F_Cpu c;
   FBytecodeChunk *chunk = FBytecodeChunkInit ();
 
+  // FBytecodeChunkMany (chunk, 
+  // INITSEC, 1, NNULL,
+  // INIT, 1, NNULL,
+
+  // SUB, 8,
+  // ECHO, 0x47, NNULL,
+  // END,
+  // ENDSUB,
+
+  // SUB, 9,
+  // ECHO, 0x0a, NNULL,
+  // END,
+  // ENDSUB,
+
+  // GOSUB, 8, NNULL,
+  // GOSUB, 9, NNULL,
+
+  // END,
+  // __END__);
+
   FBytecodeChunkMany (chunk, 
-  INITSEC, 1, NNULL,
   INIT, 1, NNULL,
+  INIT, 2, NNULL,
 
-  SUB, 8,
-  ECHO, 0x47, NNULL,
-  END,
-  ENDSUB,
+  PUT, 1, 0x41, 7, NNULL,
 
-  SUB, 9,
-  ECHO, 0x0a, NNULL,
-  END,
-  ENDSUB,
+  EACH, 1, NNULL,
 
-  GOSUB, 8, NNULL,
-  GOSUB, 9, NNULL,
+  GET, 1, 7, 2, NNULL,
+
+  EACH, 2, NNULL,
 
   END,
   __END__);
-
-  FPrintBytecodeChunk (chunk);
 
   FILE * p = fopen ("test.n", "wb");
 
@@ -43,10 +56,7 @@ main (void)
 
   fclose (p);
 
-  // printf("RR %d\n", c.reg[1].data[7]);
-
   byte result = CPRunBytecode (&c, chunk);
-
 
   FBytecodeChunkFree (chunk);
 }

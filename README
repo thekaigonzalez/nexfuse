@@ -3,6 +3,9 @@ NexFUSE
     the alternative to OpenLUD OBI(OpenLUD ByteCode Intermediate) written
     entirely in ANSI C
 
+    FUSE compiles on Windows, Linux, MacOS, as well as on embedded systems that
+    may not have as much memory.
+
     FUSE supports the concept of incremental memory allocation, meaning that
     instead of every byte being allocated on the heap, only a few of them are
     allocated at a time. for example: if you have a list of 10 bytes, and the

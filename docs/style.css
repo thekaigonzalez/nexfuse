@@ -10,7 +10,7 @@ div {
   width: 70%;
   margin: 25px auto;
   height: 110%;
-  font-size: smaller;
+  font-size: normal;
   font-family: 'Times New Roman', Times, serif, Geneva, Tahoma, sans-serif;
   /* box-shadow: 0px 0px 5px #888; */
   border: 0.5px;

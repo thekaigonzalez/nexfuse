@@ -1,0 +1,83 @@
+<!--Copyright 2019-2023 Kai D. Gonzalez-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, initial-scale=1.0">
+  <title>NexFUSE Bytecode Intermediate Language</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div>
+    <img src="logo.png" alt="NexFUSE Logo" width="100" height="100">
+    <h1 id="title">NexFuse</h1>
+
+    <p>NexFuse is a bytecode intermediate language designed for speed, safety, and
+    security. It was originally designed by Kai D. Gonzalez in 2019, only
+    ultimately brought back to life in 2023. The <i>NexFUSE</i> bytecode
+    interpreter is the successor of the <i>OpenLUD</i> bytecode format.</p>
+
+    <span>When do I use NF or OL?</span>
+
+    <p>NF (NexFUSE) is a bytecode format that was designed to be very
+    performant, compliant, and secure. NexFUSE has an extremely low overhead,
+    meaning that functions that you run in NexFUSE use very little memory. This
+    is due to <a
+    href="https://en.wikipedia.org/wiki/Memory_management">Incremental
+    Allocation</a>. Which, from the start, has been the de-facto standard for
+    NexFUSE. OpenLUD, on the other hand, relies on D's garbage collector in
+    order to handle memory leaks and allocation, and is not as performant as
+    NexFUSE.</p>
+    
+    <p>Quoting the <a href="./fuse.pdf">NexFUSE User Reference Manual</a>:</p>
+
+    <blockquote>
+      <p>Other ‘time’ outputs also show that NexFUSE runs 2 times faster than
+      OpenLUD–but HOW you may ask? Because instead of using another programming
+      language (D)’s garbage collector, NexFUSE instead manages its own memory,
+      while also using an incremental-style allocation system for lists and
+      objects</p>
+    </blockquote>
+
+    <p>For the same amount of bytecode, OpenLUD EXHAUSTED its memory while
+    NexFUSE kept allocations to a minimum. Only allocating what it needed and
+    didn't hold on to anything after it was finished using it. That is what
+    makes NF performant, especially for running multiplatform code on
+    lower-level potentially embedded devices, is its low memory overhead, which
+    makes it extremely--dare i say outrageously portable to just about any
+    device you could think of.</p>
+
+    <p>NexFUSE conforms to a majority of C standards, the main focus being ANSI
+    C, and while it may not be 1-1 perfect, there are many different principles
+    taken from it.</p>
+
+    <span>What is OpenLUD?</span>
+
+    <p>OpenLUD is a bytecode language that was designed as a research
+    implementation of a simple bytecode format. While, this format is not
+    actively maintained, it set ground standards for the bytecode intermediate
+    area as a whole.</p>
+
+    <p>Both formats are register-based, and are very similar in their structure.
+    NexFUSE contains a more extensible API than OpenLUD.</p>
+
+    <p>If you want to learn more about OpenLUD or NexFUSE, please check out the
+    manual, going over the history and reference for the OL/NF bytecode
+    instruction set.</p>
+
+    <hr>
+    <br>
+
+    <span>NexFUSE News</span>
+
+    <p>NexFUSE is finally released! The first release is now available on
+    GitHub, the same commit that is also releasing this website itself.</p>
+
+  </div>
+</body>
+
+</html>

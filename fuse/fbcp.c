@@ -231,7 +231,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
           state = START;
 
           byte reg_addr = (byte)FCtxGet (_ctx, 0);
-          FReg *sector = &cpu->section[reg_addr];
+          FSection *sector = &cpu->section[reg_addr];
 
           for (int j = 1; j < _ctx->__ptr->size; ++j)
             {

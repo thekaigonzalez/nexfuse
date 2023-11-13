@@ -121,24 +121,13 @@ int __CLEAR (F_Cpu *cpu, FCtx *ctx) {
 int
 __GET (F_Cpu *cpu, FCtx *ctx)
 {
+  if (ctx->__ptr->size < 4) {
+    return -1;
+  }
   byte reg_num = (byte)FCtxGet (ctx, 1);
   byte reg_pos = (byte)FCtxGet (ctx, 2);
   byte reg_out = (byte)FCtxGet (ctx, 3);
 
-  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT || reg_num == NULL)
-    {
-      return -1;
-    }
-
-  if (reg_pos >= FUSE_OPENLUD_REGISTER_BYTES || reg_pos == NULL)
-    {
-      return -1;
-    }
-
-  if (reg_out >= FUSE_OPENLUD_REGISTER_LIMIT || reg_out == NULL)
-    {
-      return -1;
-    }
 
   FReg *r = &cpu->reg[reg_num];
 

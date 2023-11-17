@@ -183,6 +183,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, CLEAR, __CLEAR);
   FFnMapDefine (fns, GOSUB, __GOSUB);
   FFnMapDefine (fns, GET, __GET);
+  FFnMapDefine (fns, MOVE, __MOVE);
 
   _FBytecodeState state = START;
 

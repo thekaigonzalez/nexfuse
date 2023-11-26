@@ -3,9 +3,10 @@
 int
 __ECHO (F_Cpu *cpu, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 1) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 1)
+    {
+      return -1;
+    }
   printf ("%c", (byte)FCtxGet (ctx, 1));
   return (0);
 }
@@ -20,9 +21,10 @@ __INITSEC (F_Cpu *cpu, FCtx *ctx)
 int
 __INIT (F_Cpu *c, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 2) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
 
   CPInitializeRegister (c, (byte)FCtxGet (ctx, 1));
   return (0);
@@ -32,9 +34,10 @@ __INIT (F_Cpu *c, FCtx *ctx)
 int
 __PUT (F_Cpu *cpu, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 4) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 4)
+    {
+      return -1;
+    }
   byte reg_num = (byte)FCtxGet (ctx, 1);
   byte reg_byte = (byte)FCtxGet (ctx, 2);
   byte reg_pos = (byte)FCtxGet (ctx, 3);
@@ -53,9 +56,10 @@ __PUT (F_Cpu *cpu, FCtx *ctx)
 int
 __EACH (F_Cpu *cpu, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 2) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
   byte reg_num = (byte)FCtxGet (ctx, 1);
 
   FReg reg = cpu->reg[reg_num];
@@ -83,9 +87,10 @@ __RESET (F_Cpu *cpu, FCtx *ctx)
 int
 __GOSUB (F_Cpu *cpu, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 2) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
 
   byte reg_num = (byte)FCtxGet (ctx, 1);
 
@@ -109,11 +114,14 @@ __GOSUB (F_Cpu *cpu, FCtx *ctx)
   return 0;
 }
 
-int __CLEAR (F_Cpu *cpu, FCtx *ctx) {
+int
+__CLEAR (F_Cpu *cpu, FCtx *ctx)
+{
   // clear all registers
-  for (int i = 0; i < FUSE_OPENLUD_REGISTER_LIMIT; i++) {
-    memset (&cpu->reg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
-  }
+  for (int i = 0; i < FUSE_OPENLUD_REGISTER_LIMIT; i++)
+    {
+      memset (&cpu->reg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
+    }
 }
 
 // __GET
@@ -121,17 +129,17 @@ int __CLEAR (F_Cpu *cpu, FCtx *ctx) {
 int
 __GET (F_Cpu *cpu, FCtx *ctx)
 {
-  if (ctx->__ptr->size < 4) {
-    return -1;
-  }
+  if (ctx->__ptr->size < 4)
+    {
+      return -1;
+    }
   byte reg_num = (byte)FCtxGet (ctx, 1);
   byte reg_pos = (byte)FCtxGet (ctx, 2);
   byte reg_out = (byte)FCtxGet (ctx, 3);
 
-
   FReg *r = &cpu->reg[reg_num];
 
-  FReg* n = &cpu->reg[reg_out];
+  FReg *n = &cpu->reg[reg_out];
   n->data[n->ptr] = r->data[reg_pos];
   n->ptr++;
 
@@ -228,7 +236,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
               CPAppendByteSection (cpu, reg_addr, _ctx->__ptr->ptr[j]);
             }
 
-            pc = 0;
+          pc = 0;
 
           FBytecodeChunkReset (tmp);
           FListClear (_ctx->__ptr);
@@ -236,28 +244,36 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 
       else if (op == NNULL && pc > 0 && state == START)
         { /* if the pc is greater than 0 meaning that we've advanced*/
-          FFnEntry *f = FFnMapGet (fns, (byte) FCtxGet (_ctx, 0));
-
-          if (f == NULL)
+          if ((byte)FCtxGet (_ctx, 0) == NNULL)
             {
-              printf ("fuse: unknown function call near (%p) => %d\nuseful "
+              // ignore this, an excessive NNULL
+            }
+          else
+            {
+              FFnEntry *f = FFnMapGet (fns, (byte)FCtxGet (_ctx, 0));
+
+              if (f == NULL)
+                {
+                  printf (
+                      "fuse: unknown function call near (%p) => %d\nuseful "
                       "information:\n\t*pc -> %d\n",
                       &op, tmp->ptr[0], pc);
-              err = 1;
-              break;
+                  err = 1;
+                  break;
+                }
+
+              if (f->fn (cpu, _ctx) != 0)
+                {
+                  printf ("fuse: error: %d\n", tmp->ptr[0]);
+                  err = 1;
+                  break;
+                }
+
+              FBytecodeChunkReset (tmp);
+              FListClear (_ctx->__ptr);
+
+              pc = 0;
             }
-
-          if (f->fn (cpu, _ctx) != 0)
-            {
-              printf ("fuse: error: %d\n", tmp->ptr[0]);
-              err = 1;
-              break;
-            }
-
-          FBytecodeChunkReset (tmp);
-          FListClear (_ctx->__ptr);
-
-          pc = 0;
         }
       else
         {

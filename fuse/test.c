@@ -2,10 +2,11 @@
 #include "fbcp.h"
 #include "fctx.h"
 #include "flist.h"
+#include "fou.h"
 #include "fvcpu.h"
 
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define PASSED printf ("test %s passed\n", __func__)
 
@@ -126,19 +127,17 @@ test_bytecode_executor (void)
   F_Cpu c;
   FBytecodeChunk *chunk = FBytecodeChunkInit ();
 
-  FBytecodeChunkMany (chunk, 
-  
-  INITSEC, 1, NNULL,
-  INIT, 1, NNULL,
+  FBytecodeChunkMany (chunk,
 
-  PUT, 1, 0x47, 7, NNULL,
-  EACH, 1, NNULL,
+                      INITSEC, 1, NNULL, INIT, 1, NNULL,
 
-  __END__);
+                      PUT, 1, 0x47, 7, NNULL, EACH, 1, NNULL,
+
+                      __END__);
 
   // printf("RR %d\n", c.reg[1].data[7]);
 
-  CPShowRegister(&c, 1);
+  CPShowRegister (&c, 1);
 
   byte result = CPRunBytecode (&c, chunk);
 
@@ -147,25 +146,27 @@ test_bytecode_executor (void)
   PASSED;
 }
 
-int sample_function (F_Cpu *cpu, FCtx *ctx)
+int
+sample_function (F_Cpu *cpu, FCtx *ctx)
 {
   printf ("Hello, World!\n");
   return (0);
 }
 
-test_function_mapping (void) {
+test_function_mapping (void)
+{
   FFnMap *map = FFnMapInit ();
 
   FFnMapDefine (map, 100, sample_function);
-  
+
   FFnEntry *sf = FFnMapGet (map, 100);
 
   if (sf == NULL)
     {
-      printf("function not found\n");
+      printf ("function not found\n");
       return;
     }
-  
+
   FFnMapFree (map);
 }
 
@@ -183,15 +184,44 @@ test_dangling_pointer_endurance (void)
   PASSED;
 }
 
+output (void)
+{
+  FBytecodeChunk *chunk = FBytecodeChunkInit ();
+
+  FBytecodeChunkMany (chunk, 10, 1, 41, 1, 72, 0, 41, 1, 101, 0, 41, 1, 108, 0,
+                      41, 1, 108, 0, 41, 1, 111, 0, 41, 1, 10, 0, 
+                      22, 11,
+                      
+                      10, 2, 
+                      41, 1, 87, 0, 
+                      41, 1, 111, 0, 
+                      41, 1, 0, 0, 
+                      41, 1, 108, 0, 
+                      41, 1, 100, 0, 
+                      41, 1, 10, 0, 
+                      22, 11, 
+                      
+                      100, 1, 0, 
+                      15, 1, 0, 
+                      15, 2, 0, 
+                      42, 1, 0, 
+                      22, __END__);
+
+  FPrintBytecodeChunk (chunk);
+
+  FBytecodeChunkFree (chunk);
+}
+
 main ()
 {
-  test_list_cap ();
-  test_ctx ();
-  test_vcpu_reg ();
-  test_openlud_example_in_c ();
-  test_bytecode_list_singular ();
-  test_bytecode_list_many ();
-  test_bytecode_executor ();
-  test_dangling_pointer_endurance ();
-  test_function_mapping();
+  output ();
+  // test_list_cap ();
+  // test_ctx ();
+  // test_vcpu_reg ();
+  // test_openlud_example_in_c ();
+  // test_bytecode_list_singular ();
+  // test_bytecode_list_many ();
+  // test_bytecode_executor ();
+  // test_dangling_pointer_endurance ();
+  // test_function_mapping ();
 }

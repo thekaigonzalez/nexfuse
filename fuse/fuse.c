@@ -12,6 +12,7 @@ FMain (int argc, char *argv[])
 
   FBytecodeChunk *chunk = FBytecodeChunkInit ();
 
+
   if (chunk == NULL) {
     printf("fuse: error: failed to initialize bytecode chunk\n");
     FFree(chunk);

@@ -94,6 +94,12 @@ __GOSUB (F_Cpu *cpu, FCtx *ctx)
 
   byte reg_num = (byte)FCtxGet (ctx, 1);
 
+  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT)
+    {
+      printf("error: invalid register number %d\n", reg_num);
+      return -1;
+    }
+
   FSection *reg = &cpu->section[reg_num];
 
   FBytecodeChunk *tmp = FBytecodeChunkInit ();
@@ -154,13 +160,17 @@ __MOVE (F_Cpu *cpu, FCtx *ctx)
   byte reg_num = (byte)FCtxGet (ctx, 1);
   byte reg_byte = (byte)FCtxGet (ctx, 2);
 
-  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT || reg_num == NULL)
+  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT)
     {
+      printf ("Error 1\n");
       return -1;
     }
 
-  if (reg_byte >= FUSE_OPENLUD_REGISTER_BYTES || reg_byte == NULL)
+  if (reg_byte >= FUSE_OPENLUD_REGISTER_BYTES)
     {
+      printf ("%d\n", reg_byte);
+      printf ("Error 2\n");
+
       return -1;
     }
 
@@ -203,11 +213,12 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   while (1)
     {
 
-      if (i >= chunk->size && end == 0)
+      if (i >= chunk->ptr)
         {
           printf ("fuse: infinite diffusion near (%p) (are you missing an "
                   "END?) => %d\n",
                   &chunk->ptr[i], chunk->ptr[i]);
+          printf("[C]: walk: %d\n", pc);
           break;
         }
 
@@ -230,6 +241,8 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 
           byte reg_addr = (byte)FCtxGet (_ctx, 0);
           FSection *sector = &cpu->section[reg_addr];
+
+          CPInitializeSection (cpu, reg_addr);
 
           for (int j = 1; j < _ctx->__ptr->size; ++j)
             {

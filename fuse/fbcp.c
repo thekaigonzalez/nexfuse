@@ -302,11 +302,6 @@ __CMP (F_Cpu *cpu, FCtx *ctx)
   FReg *r1 = &cpu->reg[reg_num1];
   FReg *r2 = &cpu->reg[reg_num2];
 
-  if (r1->ptr == 0 || r2->ptr == 0)
-    {
-      return -1;
-    }
-
   for (int i = 0; i < FUSE_OPENLUD_BYTE_TOP; ++i)
     {
       if (r1->data[i] != r2->data[i])
@@ -325,6 +320,7 @@ __CMP (F_Cpu *cpu, FCtx *ctx)
 
           if (reg == NULL)
             {
+              printf("nul\n");
               return -1;
             }
 
@@ -354,6 +350,7 @@ __CMP (F_Cpu *cpu, FCtx *ctx)
 
   if (reg == NULL)
     {
+      printf("erfar\n");
       return -1;
     }
 

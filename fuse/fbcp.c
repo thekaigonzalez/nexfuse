@@ -96,7 +96,7 @@ __GOSUB (F_Cpu *cpu, FCtx *ctx)
 
   if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT)
     {
-      printf("error: invalid register number %d\n", reg_num);
+      printf ("error: invalid register number %d\n", reg_num);
       return -1;
     }
 
@@ -182,6 +182,62 @@ __MOVE (F_Cpu *cpu, FCtx *ctx)
   return (0);
 }
 
+// __ADD
+// takes all bytes in REG1 and adds them to REG2
+int
+__ADD (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 3)
+    {
+      printf ("add: not enough arguments\n");
+      return -1;
+    }
+
+  byte reg_num1 = (byte)FCtxGet (ctx, 1);
+  byte reg_num2 = (byte)FCtxGet (ctx, 2);
+
+  FReg *r1 = &cpu->reg[reg_num1];
+  FBigReg *r2 = &cpu->bigreg[reg_num2];
+
+  int result = 0;
+
+  for (int i = 0; i < FUSE_OPENLUD_REGISTER_BYTES; ++i)
+    {
+      result += r1->data[i];
+    }
+
+  r2->data[r2->ptr] = (byte)result;
+  r2->ptr++;
+
+  return (0);
+}
+
+// __DB
+// prints out values in a big register if it's not 0
+int
+__DB (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+
+  FBigReg *r = &cpu->bigreg[reg_num];
+
+  if (r->ptr == 0)
+    {
+      return -1;
+    }
+
+  for (int i = 0; i < r->ptr; ++i)
+    {
+      printf ("%d ", r->data[i]);
+    }
+  return (0);
+}
+
 byte
 CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 {
@@ -202,6 +258,10 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, GOSUB, __GOSUB);
   FFnMapDefine (fns, GET, __GET);
   FFnMapDefine (fns, MOVE, __MOVE);
+  FFnMapDefine (fns, ADD, __ADD);
+  FFnMapDefine (fns, LAR, __DB);
+
+  /*math*/
 
   _FBytecodeState state = START;
 
@@ -218,7 +278,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
           printf ("fuse: infinite diffusion near (%p) (are you missing an "
                   "END?) => %d\n",
                   &chunk->ptr[i], chunk->ptr[i]);
-          printf("[C]: walk: %d\n", pc);
+          printf ("[C]: walk: %d\n", pc);
           break;
         }
 

@@ -11,9 +11,11 @@ CPStart (F_Cpu *cpu)
   for (int i = 0; i < FUSE_OPENLUD_REGISTER_LIMIT; i++) {
     memset (&cpu->reg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
     memset (&cpu->section[i].data, 0, FUSE_OPENLUD_BYTE_TOP);
+    memset (&cpu->bigreg[i].data, 0, FUSE_OPENLUD_REGISTER_BYTES);
 
     cpu->reg[i].ptr = 0;
     cpu->section[i].ptr = 0;
+    cpu->bigreg[i].ptr = 0;
   }
 }
 
@@ -27,6 +29,12 @@ FSection *
 CPSection (F_Cpu *cpu, int index)
 {
   return &cpu->section[index];
+}
+
+FBigReg *
+CPBigReg (F_Cpu *cpu, int index)
+{
+  return &cpu->bigreg[index];
 }
 
 void
@@ -60,6 +68,13 @@ CPAppendByteSection (F_Cpu *cpu, int section, byte value)
 {
   cpu->section[section].data[cpu->section[section].ptr] = value;
   cpu->section[section].ptr++;
+}
+
+void
+CPAppendIntBigReg (F_Cpu *cpu, int index, int value)
+{
+  cpu->bigreg[index].data[cpu->bigreg[index].ptr] = value;
+  cpu->bigreg[index].ptr++;
 }
 
 int

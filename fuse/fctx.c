@@ -3,7 +3,7 @@
 FCtx *
 FCtxInit ()
 {
-  FCtx *ctx = (FCtx *) malloc (sizeof (FCtx));
+  FCtx *ctx = (FCtx *)malloc (sizeof (FCtx));
 
   ctx->__ptr = FListInit ();
 
@@ -13,9 +13,10 @@ FCtxInit ()
 void *
 FCtxGet (FCtx *ctx, int index)
 {
-  if (index < 0 || index >= ctx->__ptr->size) {
-    return NULL;
-  }
+  if (index < 0 || index >= ctx->__ptr->size)
+    {
+      return NULL;
+    }
   return FListGet (ctx->__ptr, index);
 }
 
@@ -29,18 +30,24 @@ void
 FCtxFree (FCtx *ctx)
 {
   FListFree (ctx->__ptr);
-  FFree(ctx);
+  FFree (ctx);
 }
 
 void
 FCtxSmartFree (FCtx *ctx)
 {
   FListSmartFree (ctx->__ptr);
-  FFree(ctx);
+  FFree (ctx);
 }
 
 void
 FCtxRebuild (FCtx *ctx)
 {
   FListClear (ctx->__ptr);
+}
+
+int
+FCtxSize (FCtx *ctx)
+{
+  return ctx->__ptr->size;
 }

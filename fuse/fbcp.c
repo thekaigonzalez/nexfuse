@@ -182,6 +182,33 @@ __MOVE (F_Cpu *cpu, FCtx *ctx)
   return (0);
 }
 
+// __LSL
+// consecitively add bytes to register
+int
+__LSL (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 3)
+    {
+      return -1;
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+
+  for (int i = 2; i < ctx->__ptr->size; ++i)
+    {
+      if (!FCtxGet (ctx, i)) {
+        return -1;
+      }
+      
+      byte op = (byte)FCtxGet (ctx, i);
+      FReg *r = &cpu->reg[reg_num];
+      r->data[r->ptr] = op;
+      r->ptr++;
+    }
+
+    return (0);
+}
+
 // __ADD
 // takes all bytes in REG1 and adds them to REG2
 int
@@ -260,6 +287,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, MOVE, __MOVE);
   FFnMapDefine (fns, ADD, __ADD);
   FFnMapDefine (fns, LAR, __DB);
+  FFnMapDefine (fns, LSL, __LSL);
 
   /*math*/
 
@@ -273,7 +301,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   while (1)
     {
 
-      if (i >= chunk->ptr)
+      if (i >= chunk->size)
         {
           printf ("fuse: infinite diffusion near (%p) (are you missing an "
                   "END?) => %d\n",

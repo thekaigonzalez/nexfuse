@@ -27,15 +27,25 @@ typedef struct FSection
   int initialized; // is this section initialized
 } FSection;
 
+typedef struct FBigReg
+{
+  int data[FUSE_OPENLUD_BYTE_TOP]; /*contains 4 bit integers*/
+
+  int ptr;
+  int initialized;
+} FBigReg;
+
 typedef struct F_Cpu
 {
   FReg reg[FUSE_OPENLUD_REGISTER_LIMIT];   // 256 registers
   FSection section[FUSE_OPENLUD_BYTE_TOP]; // 256 sections
+  FBigReg bigreg[FUSE_OPENLUD_BYTE_TOP];   // 256 big registers
 } F_Cpu;
 
 void CPStart (F_Cpu *cpu);
 FReg *CPReg (F_Cpu *cpu, int index);
 FSection *CPSection (F_Cpu *cpu, int index);
+FBigReg* CPBigReg(F_Cpu *cpu, int index);
 
 void CPInitializeRegister (F_Cpu *cpu, int index);
 void CPInitializeSection (F_Cpu *cpu, int index);
@@ -44,6 +54,8 @@ void CPPutByteRegister (F_Cpu *cpu, int reg, int index, byte value);
 void CPPutByteSection (F_Cpu *cpu, int section, int index, byte value);
 
 void CPAppendByteSection (F_Cpu *cpu, int section, byte value);
+
+void CPAppendIntBigReg (F_Cpu *cpu, int index, int value);
 
 int CPVerifyRegister (F_Cpu *cpu, int index);
 int CPVerifySection (F_Cpu *cpu, int index);

@@ -33,6 +33,8 @@ typedef int FBool;
 #define CLEAR (byte) 44
 #define PUT (byte) 45
 #define GET (byte) 46
+#define ADD (byte) 47
+#define LAR (byte) 48
 
 // FUSE expansions
 #define SUB (byte) 10

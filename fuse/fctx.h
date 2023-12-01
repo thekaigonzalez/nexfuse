@@ -20,5 +20,6 @@ void FCtxAppend(FCtx *ctx, void *ptr);
 void FCtxFree(FCtx *ctx);
 void FCtxSmartFree(FCtx *ctx);
 void FCtxRebuild(FCtx *ctx);
+int FCtxSize(FCtx *ctx);
 
 #endif

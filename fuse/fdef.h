@@ -36,10 +36,14 @@ typedef int FBool;
 #define ADD (byte) 47
 #define LAR (byte) 48
 #define LSL (byte) 49
+#define IN (byte) 50
+#define CMP (byte) 51
+#define INC (byte) 52
+#define REP (byte) 53
 
 // FUSE expansions
 #define SUB (byte) 10
-#define ENDSUB (byte) 11
+#define ENDSUB (byte) 0x80
 // #define IF (byte) 12
 // #define ENDIF (byte) 13
 // #define ALIAS (byte) 14

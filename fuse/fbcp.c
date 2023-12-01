@@ -196,17 +196,18 @@ __LSL (F_Cpu *cpu, FCtx *ctx)
 
   for (int i = 2; i < ctx->__ptr->size; ++i)
     {
-      if (!FCtxGet (ctx, i)) {
-        return -1;
-      }
-      
+      if (!FCtxGet (ctx, i))
+        {
+          return -1;
+        }
+
       byte op = (byte)FCtxGet (ctx, i);
       FReg *r = &cpu->reg[reg_num];
       r->data[r->ptr] = op;
       r->ptr++;
     }
 
-    return (0);
+  return (0);
 }
 
 // __ADD
@@ -265,6 +266,163 @@ __DB (F_Cpu *cpu, FCtx *ctx)
   return (0);
 }
 
+// __IN
+// gets input from keyboard via fgetc
+int
+__IN (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+
+  FReg *r = &cpu->reg[reg_num];
+
+  r->data[r->ptr] = fgetc (stdin);
+  r->ptr++;
+
+  return (0);
+}
+
+// __CMP
+// compares two registers then jmps to a label
+int
+__CMP (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 4)
+    {
+      return -1;
+    }
+
+  byte reg_num1 = (byte)FCtxGet (ctx, 1);
+  byte reg_num2 = (byte)FCtxGet (ctx, 2);
+
+  FReg *r1 = &cpu->reg[reg_num1];
+  FReg *r2 = &cpu->reg[reg_num2];
+
+  if (r1->ptr == 0 || r2->ptr == 0)
+    {
+      return -1;
+    }
+
+  for (int i = 0; i < FUSE_OPENLUD_BYTE_TOP; ++i)
+    {
+      if (r1->data[i] != r2->data[i])
+        {
+          byte reg_num = (byte)FCtxGet (ctx, 4);
+
+          if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT)
+            {
+              printf ("error: invalid register number %d\n", reg_num);
+              return -1;
+            }
+
+          FSection *reg = &cpu->section[reg_num];
+
+          FBytecodeChunk *tmp = FBytecodeChunkInit ();
+
+          if (reg == NULL)
+            {
+              return -1;
+            }
+
+          for (int i = 0; i < reg->ptr; ++i)
+            {
+              FBytecodeChunkAppend (tmp, reg->data[i]);
+            }
+
+          CPRunBytecode (cpu, tmp);
+
+          FBytecodeChunkFree (tmp);
+          return 0;
+        }
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 3);
+
+  if (reg_num >= FUSE_OPENLUD_REGISTER_LIMIT)
+    {
+      printf ("error: invalid register number %d\n", reg_num);
+      return -1;
+    }
+
+  FSection *reg = &cpu->section[reg_num];
+
+  FBytecodeChunk *tmp = FBytecodeChunkInit ();
+
+  if (reg == NULL)
+    {
+      return -1;
+    }
+
+  for (int i = 0; i < reg->ptr; ++i)
+    {
+      FBytecodeChunkAppend (tmp, reg->data[i]);
+    }
+
+  CPRunBytecode (cpu, tmp);
+
+  FBytecodeChunkFree (tmp);
+
+  return (0);
+}
+
+// __INC
+// increments a register
+int
+__INC (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 2)
+    {
+      return -1;
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+
+  FReg *r = &cpu->reg[reg_num];
+
+  r->data[r->ptr]++;
+
+  return (0);
+}
+
+// __REP
+// repeats a subroutine X times
+int
+__REP (F_Cpu *cpu, FCtx *ctx)
+{
+  if (ctx->__ptr->size < 3)
+    {
+      return -1;
+    }
+
+  byte reg_num = (byte)FCtxGet (ctx, 1);
+
+  FSection *reg = &cpu->section[reg_num];
+
+  FBytecodeChunk *tmp = FBytecodeChunkInit ();
+
+  if (reg == NULL)
+    {
+      return -1;
+    }
+
+  for (int j = 0; j < (int)FCtxGet (ctx, 2); ++j)
+    {
+
+      for (int i = 0; i < reg->ptr; ++i)
+        {
+          FBytecodeChunkAppend (tmp, reg->data[i]);
+        }
+
+      CPRunBytecode (cpu, tmp);
+    }
+  FBytecodeChunkFree (tmp);
+  return (0);
+}
+
 byte
 CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
 {
@@ -288,6 +446,10 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
   FFnMapDefine (fns, ADD, __ADD);
   FFnMapDefine (fns, LAR, __DB);
   FFnMapDefine (fns, LSL, __LSL);
+  FFnMapDefine (fns, IN, __IN);
+  FFnMapDefine (fns, CMP, __CMP);
+  FFnMapDefine (fns, INC, __INC);
+  FFnMapDefine (fns, REP, __REP);
 
   /*math*/
 
@@ -348,6 +510,7 @@ CPRunBytecode (F_Cpu *cpu, FBytecodeChunk *chunk)
           if ((byte)FCtxGet (_ctx, 0) == NNULL)
             {
               // ignore this, an excessive NNULL
+              pc = 0;
             }
           else
             {
